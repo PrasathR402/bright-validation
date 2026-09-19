@@ -116,7 +116,9 @@ export function productsQuery(filters: ProductFilters = {}) {
     queryFn: async (): Promise<Product[]> => {
       let query = supabase.from("products").select(PRODUCT_FIELDS).eq("is_active", true);
 
-      if (filters.categorySlug) query = query.eq("categories.slug", filters.categorySlug);
+      // category filtering is applied client-side below (embedded-table filters
+      // require an inner join and would drop uncategorised rows)
+
       if (filters.search) query = query.ilike("name", `%${filters.search}%`);
       if (filters.bestSellers) query = query.eq("is_best_seller", true);
       if (filters.newArrivals) query = query.eq("is_new_arrival", true);
