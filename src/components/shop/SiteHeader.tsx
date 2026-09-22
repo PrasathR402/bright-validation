@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, Menu, Package, Search, ShoppingCart, Sparkles, User } from "lucide-react";
 import { useState } from "react";
@@ -6,13 +6,24 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { categoriesQuery } from "@/lib/shop";
 
 export function SiteHeader() {
   const { data: categories = [] } = useQuery(categoriesQuery);
   const { count } = useCart();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  async function signOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
   const [term, setTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
