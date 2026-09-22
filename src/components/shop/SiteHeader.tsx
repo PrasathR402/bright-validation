@@ -1,24 +1,35 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Search, ShoppingCart, Sparkles } from "lucide-react";
+import { LogOut, Menu, Package, Search, ShoppingCart, Sparkles, User } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { categoriesQuery } from "@/lib/shop";
 
 export function SiteHeader() {
   const { data: categories = [] } = useQuery(categoriesQuery);
   const { count } = useCart();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  async function signOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
   const [term, setTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
   function submitSearch(event: React.FormEvent) {
     event.preventDefault();
-    navigate({ to: "/shop", search: { q: term || undefined, category: undefined, sort: undefined } });
+    navigate({ to: "/shop", search: (prev) => ({ ...prev, q: term || undefined }) });
   }
 
   return (
@@ -88,7 +99,27 @@ export function SiteHeader() {
             )}
           </Link>
         </Button>
+
+        {user ? (
+          <div className="flex items-center gap-1">
+            <Button asChild variant="ghost" size="icon" aria-label="My account">
+              <Link to="/account">
+                <User className="size-5" />
+              </Link>
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="Sign out" onClick={signOut}>
+              <LogOut className="size-5" />
+            </Button>
+          </div>
+        ) : (
+          <Button asChild variant="secondary" size="sm">
+            <Link to="/auth">
+              <Package className="mr-1 size-4" /> Sign in
+            </Link>
+          </Button>
+        )}
       </div>
+
 
       <form onSubmit={submitSearch} className="mx-auto flex max-w-6xl gap-2 px-4 pb-3 sm:hidden">
         <div className="relative w-full">

@@ -122,7 +122,7 @@ function CheckoutPage() {
         total,
         coupon_code: coupon?.code ?? null,
         estimated_delivery: eta.toISOString().slice(0, 10),
-        shipping_address: selected as unknown as Record<string, unknown>,
+        shipping_address: selected as unknown as never,
       })
       .select("id, order_number")
       .single();

@@ -10,7 +10,7 @@ export function AddressForm({
   userId,
   onSaved,
 }: {
-  userId?: string;
+  userId?: string | undefined;
   onSaved: (id: string) => void;
 }) {
   const [busy, setBusy] = useState(false);
