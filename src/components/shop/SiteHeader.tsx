@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Search, ShoppingCart, Sparkles } from "lucide-react";
+import { LogOut, Menu, Package, Search, ShoppingCart, Sparkles, User } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
