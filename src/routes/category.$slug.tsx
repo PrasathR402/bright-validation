@@ -65,7 +65,7 @@ function CategoryPage() {
             <h1 className="text-2xl font-bold">{category?.name ?? "Crackers"}</h1>
             <p className="text-sm text-muted-foreground">{category?.description}</p>
           </div>
-          <Select value={sort} onValueChange={(value) => setSort(value as ProductFilters["sort"])}>
+          <Select value={sort ?? "popular"} onValueChange={(value) => setSort(value as ProductFilters["sort"])}>
             <SelectTrigger className="sm:w-48">
               <SelectValue placeholder="Sort" />
             </SelectTrigger>

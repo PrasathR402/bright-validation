@@ -102,12 +102,12 @@ export const offersQuery = queryOptions({
 });
 
 export type ProductFilters = {
-  categorySlug?: string;
-  search?: string;
-  sort?: "popular" | "price-asc" | "price-desc" | "new";
-  bestSellers?: boolean;
-  newArrivals?: boolean;
-  limit?: number;
+  categorySlug?: string | undefined;
+  search?: string | undefined;
+  sort?: "popular" | "price-asc" | "price-desc" | "new" | undefined;
+  bestSellers?: boolean | undefined;
+  newArrivals?: boolean | undefined;
+  limit?: number | undefined;
 };
 
 export function productsQuery(filters: ProductFilters = {}) {

@@ -29,7 +29,7 @@ export function SiteHeader() {
 
   function submitSearch(event: React.FormEvent) {
     event.preventDefault();
-    navigate({ to: "/shop", search: { q: term || undefined, category: undefined, sort: undefined } });
+    navigate({ to: "/shop", search: (prev) => ({ ...prev, q: term || undefined }) });
   }
 
   return (

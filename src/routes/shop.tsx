@@ -19,8 +19,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { categoriesQuery, productsQuery, type ProductFilters } from "@/lib/shop";
 
 type ShopSearch = {
-  q?: string;
-  category?: string;
+  q?: string | undefined;
+  category?: string | undefined;
   sort?: ProductFilters["sort"];
 };
 
