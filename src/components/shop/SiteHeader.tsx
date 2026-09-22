@@ -99,7 +99,27 @@ export function SiteHeader() {
             )}
           </Link>
         </Button>
+
+        {user ? (
+          <div className="flex items-center gap-1">
+            <Button asChild variant="ghost" size="icon" aria-label="My account">
+              <Link to="/account">
+                <User className="size-5" />
+              </Link>
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="Sign out" onClick={signOut}>
+              <LogOut className="size-5" />
+            </Button>
+          </div>
+        ) : (
+          <Button asChild variant="secondary" size="sm">
+            <Link to="/auth">
+              <Package className="mr-1 size-4" /> Sign in
+            </Link>
+          </Button>
+        )}
       </div>
+
 
       <form onSubmit={submitSearch} className="mx-auto flex max-w-6xl gap-2 px-4 pb-3 sm:hidden">
         <div className="relative w-full">
