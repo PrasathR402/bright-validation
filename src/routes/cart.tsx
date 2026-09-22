@@ -180,8 +180,10 @@ function CartPage() {
                 <span>Total</span>
                 <span>{formatINR(total)}</span>
               </div>
-              <Button className="mt-4 w-full" size="lg" onClick={() => toast("Checkout and payments are coming in the next step.")}>
-                Proceed to checkout
+              <Button asChild className="mt-4 w-full" size="lg">
+                <Link to="/checkout" search={{ coupon: coupon?.code }}>
+                  Proceed to checkout
+                </Link>
               </Button>
               <Button asChild variant="ghost" className="mt-2 w-full">
                 <Link to="/shop">Continue shopping</Link>
