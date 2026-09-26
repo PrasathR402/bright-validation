@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LogOut, Menu, Package, Search, ShoppingCart, Sparkles, User } from "lucide-react";
+import { Bell, LogOut, Menu, Package, Search, ShoppingCart, Sparkles, User } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,18 @@ export function SiteHeader() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { data: unread = 0 } = useQuery({
+    queryKey: ["notifications", "unread", user?.id],
+    enabled: !!user,
+    refetchInterval: 60000,
+    queryFn: async () => {
+      const { count: c } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("is_read", false);
+      return c ?? 0;
+    },
+  });
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -49,6 +61,9 @@ export function SiteHeader() {
             <nav className="flex flex-col gap-1">
               <Link to="/shop" className="rounded-md px-2 py-2 text-sm hover:bg-muted" onClick={() => setMenuOpen(false)}>
                 All products
+              </Link>
+              <Link to="/new-arrivals" className="rounded-md px-2 py-2 text-sm font-semibold text-primary hover:bg-muted" onClick={() => setMenuOpen(false)}>
+                New arrivals
               </Link>
               {categories.map((category) => (
                 <Link
@@ -102,6 +117,21 @@ export function SiteHeader() {
 
         {user ? (
           <div className="flex items-center gap-1">
+            <Button asChild variant="ghost" size="icon" className="relative" aria-label="Notifications">
+              <Link to="/notifications">
+                <Bell className="size-5" />
+                {unread > 0 && (
+                  <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-gold text-[11px] font-bold text-gold-foreground">
+                    {unread}
+                  </span>
+                )}
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" size="icon" aria-label="My orders">
+              <Link to="/orders">
+                <Package className="size-5" />
+              </Link>
+            </Button>
             <Button asChild variant="ghost" size="icon" aria-label="My account">
               <Link to="/account">
                 <User className="size-5" />
@@ -135,6 +165,12 @@ export function SiteHeader() {
 
       <nav className="hidden border-t bg-secondary/50 lg:block">
         <div className="mx-auto flex max-w-6xl flex-wrap gap-1 px-4 py-2">
+          <Link
+            to="/new-arrivals"
+            className="rounded-full bg-gold px-3 py-1.5 text-sm font-bold text-gold-foreground"
+          >
+            New Arrivals
+          </Link>
           {categories.map((category) => (
             <Link
               key={category.id}

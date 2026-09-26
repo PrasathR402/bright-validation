@@ -13,9 +13,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as NewArrivalsRouteImport } from './routes/new-arrivals'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as AuthenticatedOrderIdRouteImport } from './routes/_authenticated/order.$id'
@@ -39,6 +42,11 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewArrivalsRoute = NewArrivalsRouteImport.update({
+  id: '/new-arrivals',
+  path: '/new-arrivals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -52,6 +60,17 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
 const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const CategorySlugRoute = CategorySlugRouteImport.update({
@@ -74,9 +93,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
+  '/new-arrivals': typeof NewArrivalsRoute
   '/shop': typeof ShopRoute
   '/account': typeof AuthenticatedAccountRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/order/$id': typeof AuthenticatedOrderIdRoute
@@ -85,9 +107,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
+  '/new-arrivals': typeof NewArrivalsRoute
   '/shop': typeof ShopRoute
   '/account': typeof AuthenticatedAccountRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/order/$id': typeof AuthenticatedOrderIdRoute
@@ -98,9 +123,12 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
+  '/new-arrivals': typeof NewArrivalsRoute
   '/shop': typeof ShopRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
   '/_authenticated/order/$id': typeof AuthenticatedOrderIdRoute
@@ -111,9 +139,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/cart'
+    | '/new-arrivals'
     | '/shop'
     | '/account'
     | '/checkout'
+    | '/notifications'
+    | '/orders'
     | '/category/$slug'
     | '/product/$slug'
     | '/order/$id'
@@ -122,9 +153,12 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/cart'
+    | '/new-arrivals'
     | '/shop'
     | '/account'
     | '/checkout'
+    | '/notifications'
+    | '/orders'
     | '/category/$slug'
     | '/product/$slug'
     | '/order/$id'
@@ -134,9 +168,12 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/cart'
+    | '/new-arrivals'
     | '/shop'
     | '/_authenticated/account'
     | '/_authenticated/checkout'
+    | '/_authenticated/notifications'
+    | '/_authenticated/orders'
     | '/category/$slug'
     | '/product/$slug'
     | '/_authenticated/order/$id'
@@ -147,6 +184,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
+  NewArrivalsRoute: typeof NewArrivalsRoute
   ShopRoute: typeof ShopRoute
   CategorySlugRoute: typeof CategorySlugRoute
   ProductSlugRoute: typeof ProductSlugRoute
@@ -182,6 +220,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/new-arrivals': {
+      id: '/new-arrivals'
+      path: '/new-arrivals'
+      fullPath: '/new-arrivals'
+      preLoaderRoute: typeof NewArrivalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -201,6 +246,20 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/orders': {
+      id: '/_authenticated/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof AuthenticatedOrdersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/category/$slug': {
@@ -230,12 +289,16 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedOrderIdRoute: typeof AuthenticatedOrderIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedOrderIdRoute: AuthenticatedOrderIdRoute,
 }
 
@@ -247,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CartRoute: CartRoute,
+  NewArrivalsRoute: NewArrivalsRoute,
   ShopRoute: ShopRoute,
   CategorySlugRoute: CategorySlugRoute,
   ProductSlugRoute: ProductSlugRoute,
