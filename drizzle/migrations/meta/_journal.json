@@ -8,6 +8,13 @@
       "when": 1789820261093,
       "tag": "0000_crackers_store_core_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790441227807,
+      "tag": "0001_order_tracking_notifications",
+      "breakpoints": true
     }
   ]
 }
