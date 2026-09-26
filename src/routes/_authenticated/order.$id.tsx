@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, FileDown } from "lucide-react";
+
+const STEPS = ["placed", "packed", "shipped", "delivered"] as const;
 
 import { SiteFooter } from "@/components/shop/SiteFooter";
 import { SiteHeader } from "@/components/shop/SiteHeader";
@@ -56,7 +58,12 @@ function OrderPage() {
         .select("id, product_name, image_url, unit_price, quantity, line_total")
         .eq("order_id", id);
       if (itemsError) throw itemsError;
-      return { order, items: items ?? [] };
+      const { data: history } = await supabase
+        .from("order_status_history")
+        .select("status, created_at")
+        .eq("order_id", id)
+        .order("created_at");
+      return { order, items: items ?? [], history: history ?? [] };
     },
   });
 
@@ -95,7 +102,7 @@ function OrderPage() {
       <main className="mx-auto max-w-3xl px-4 py-8">
         <div className="rounded-xl border bg-card p-6 text-center">
           <CheckCircle2 className="mx-auto size-12 text-success" />
-          <h1 className="mt-3 text-2xl font-bold">Order placed</h1>
+          <h1 className="mt-3 text-2xl font-bold capitalize">Order {order.status}</h1>
           <p className="mt-1 text-muted-foreground">
             Order {order.order_number} · {formatINR(Number(order.total))}
           </p>
@@ -105,6 +112,37 @@ function OrderPage() {
             </p>
           )}
         </div>
+
+        <section className="mt-6 rounded-xl border bg-card p-4 print:hidden">
+          <h2 className="text-lg font-bold">Tracking</h2>
+          <ol className="mt-4 grid grid-cols-4 gap-2">
+            {STEPS.map((step, i) => {
+              const current = STEPS.indexOf(order.status as (typeof STEPS)[number]);
+              const done = i <= current;
+              const at = data.history.find((h) => h.status === step);
+              return (
+                <li key={step} className="flex flex-col items-center text-center">
+                  <span
+                    className={`grid size-9 place-items-center rounded-full text-sm font-bold ${done ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className={`mt-2 text-xs font-semibold capitalize sm:text-sm ${done ? "" : "text-muted-foreground"}`}>
+                    {step}
+                  </span>
+                  {at && (
+                    <span className="text-[11px] text-muted-foreground">
+                      {formatDate(new Date(at.created_at))}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+          {order.status === "cancelled" && (
+            <p className="mt-3 text-sm text-destructive">This order was cancelled.</p>
+          )}
+        </section>
 
         <section className="mt-6 rounded-xl border bg-card p-4">
           <h2 className="text-lg font-bold">Items</h2>
@@ -168,12 +206,15 @@ function OrderPage() {
           </p>
         </section>
 
-        <div className="mt-6 flex gap-2">
+        <div className="mt-6 flex flex-wrap gap-2 print:hidden">
+          <Button variant="outline" onClick={() => window.print()}>
+            <FileDown className="mr-1 size-4" /> Download invoice
+          </Button>
           <Button asChild variant="outline">
             <Link to="/shop">Continue shopping</Link>
           </Button>
           <Button asChild>
-            <Link to="/account">My account</Link>
+            <Link to="/orders">My orders</Link>
           </Button>
         </div>
       </main>
